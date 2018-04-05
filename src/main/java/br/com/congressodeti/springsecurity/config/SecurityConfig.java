@@ -1,5 +1,7 @@
 package br.com.congressodeti.springsecurity.config;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -16,6 +18,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private DataSource dataSource;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -28,10 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public void configureAuth(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("maria").password(passwordEncoder.encode("rodarodavira")).roles("USER")
-                .and().withUser("manuel").password(passwordEncoder.encode("robertoleal")).roles("USER")
-                .and().withUser("TONI").password(passwordEncoder.encode("toni123")).roles("USER");
+        auth.jdbcAuthentication().dataSource(dataSource);
     }
 
 }

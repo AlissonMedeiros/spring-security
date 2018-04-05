@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class ApiController {
 
     @GetMapping("/me")
-    public String getUserName(Principal principal){
-        return principal.getName();
+    public Principal getUserName(Principal principal){
+        return principal;
     }
 
 }
