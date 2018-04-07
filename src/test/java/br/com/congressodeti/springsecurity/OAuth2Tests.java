@@ -14,10 +14,8 @@ import io.restassured.RestAssured;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class OAuth2Tests {
 
-
     @Value("${local.server.port}")
     protected int serverPort;
-
 
     @Before
     public void init() {
@@ -72,6 +70,52 @@ public class OAuth2Tests {
                 .post("/oauth/token")
                 .then()
                 .statusCode(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @Test
+    public void whenUserHasNotScopeThenReturnError() {
+        Token token = getManuelToken();
+        RestAssured.given()
+                .header("Authorization", "Bearer " + token.getAccess_token())
+                .post("/api/v1/orders")
+                .then()
+                .statusCode(HttpStatus.FORBIDDEN.value());
+    }
+
+    @Test
+    public void whenUserHasScopeThenReturnSuccess() {
+        Token token = getManuelToken();
+        RestAssured.given()
+                .header("Authorization", "Bearer " + token.getAccess_token())
+                .get("/api/v1/orders")
+                .then()
+                .statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
+    public void whenHasAppTokenThenReturnError() {
+        Token token = RestAssured.given()
+                .auth()
+                .basic("BAR_ZEH", "BAR_ZEH123")
+                .queryParam("grant_type", "client_credentials")
+                .post("/oauth/token")
+                .as(Token.class);
+        RestAssured.given()
+                .header("Authorization", "Bearer " + token.getAccess_token())
+                .get("/api/v1/orders")
+                .then()
+                .statusCode(HttpStatus.FORBIDDEN.value());
+    }
+
+    private Token getManuelToken() {
+        return RestAssured.given()
+                .auth()
+                .basic("BAR_ZEH", "BAR_ZEH123")
+                .queryParam("grant_type", "password")
+                .queryParam("username", "manuel")
+                .queryParam("password", "robertoleal")
+                .post("/oauth/token")
+                .as(Token.class);
     }
 
 }

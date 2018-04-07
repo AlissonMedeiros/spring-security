@@ -47,8 +47,7 @@ public class SpringSecurityApplication {
                 aplicativoBarDoZeh.setClientId("BAR_ZEH");
                 aplicativoBarDoZeh.setAuthorizedGrantTypes(Arrays.asList("client_credentials", "password"));
                 aplicativoBarDoZeh.setClientSecret(passwordEncoder.encode("BAR_ZEH123"));
-                aplicativoBarDoZeh.setScope(Arrays.asList("adiciona_pedido"
-                        , "lista_pedidos"
+                aplicativoBarDoZeh.setScope(Arrays.asList("lista_pedidos"
                         , "remove_pedidos"
                         , "cadastra_produtos"
                         , "lista_produtos"));
