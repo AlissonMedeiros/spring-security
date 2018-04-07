@@ -1,5 +1,7 @@
 package br.com.congressodeti.springsecurity;
 
+import java.util.Arrays;
+
 import javax.sql.DataSource;
 
 import org.jetbrains.annotations.NotNull;
@@ -11,6 +13,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.provider.client.BaseClientDetails;
+import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.testcontainers.shaded.com.google.common.collect.Lists;
 
@@ -38,9 +42,19 @@ public class SpringSecurityApplication {
                 jdbcUserDetailsManager.createUser(maria);
                 jdbcUserDetailsManager.createUser(toni);
                 jdbcUserDetailsManager.createUser(joazinho);
+                JdbcClientDetailsService jdbcClientDetailsService = new JdbcClientDetailsService(dataSource);
+                BaseClientDetails aplicativoBarDoZeh = new BaseClientDetails();
+                aplicativoBarDoZeh.setClientId("BAR_ZEH");
+                aplicativoBarDoZeh.setAuthorizedGrantTypes(Arrays.asList("client_credentials", "password"));
+                aplicativoBarDoZeh.setClientSecret(passwordEncoder.encode("BAR_ZEH123"));
+                aplicativoBarDoZeh.setScope(Arrays.asList("adiciona_pedido"
+                        , "lista_pedidos"
+                        , "remove_pedidos"
+                        , "cadastra_produtos"
+                        , "lista_produtos"));
+                jdbcClientDetailsService.addClientDetails(aplicativoBarDoZeh);
             }
 
-            @NotNull
             private SimpleGrantedAuthority buildRole(String user) {
                 return new SimpleGrantedAuthority(user);
             }
@@ -51,4 +65,5 @@ public class SpringSecurityApplication {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }
