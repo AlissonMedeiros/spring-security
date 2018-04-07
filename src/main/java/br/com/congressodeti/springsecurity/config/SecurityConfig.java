@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -27,7 +27,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("**.html").permitAll()
-                .antMatchers("/api/**", "/").authenticated()
+                .antMatchers("/").authenticated()
+                .antMatchers("/api/**").hasAuthority("USER")
                 .and()
                 .formLogin().loginPage("/login").failureUrl("/login?error").permitAll();
     }

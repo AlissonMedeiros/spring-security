@@ -54,6 +54,16 @@ public class SpringSecurityApplicationTests {
 	}
 
 	@Test
+	public void whenHasMariaAndGetProductsThenReturnProducts() {
+		RestAssured.given()
+				.auth()
+				.basic("maria","rodarodavira")
+				.get("/api/products")
+				.then()
+				.statusCode(HttpStatus.OK.value());
+	}
+
+	@Test
 	public void whenHasToniUserThenReturnOwner() {
 		RestAssured.given()
 				.auth()
@@ -61,6 +71,26 @@ public class SpringSecurityApplicationTests {
 				.get("/api/me")
 				.then()
 				.statusCode(HttpStatus.OK.value());
+	}
+
+	@Test
+	public void whenHasToniUserThenReturnUnauthorized() {
+		RestAssured.given()
+				.auth()
+				.basic("TONI","toni123")
+				.get("/api/products")
+				.then()
+				.statusCode(HttpStatus.FORBIDDEN.value());
+	}
+
+	@Test
+	public void whenHasJoazinhoUserThenReturnUnauthorized() {
+		RestAssured.given()
+				.auth()
+				.basic("joao_hacker123","p0rtug4s3mgr4c4")
+				.get("/api/products")
+				.then()
+				.statusCode(HttpStatus.FORBIDDEN.value());
 	}
 
 }
